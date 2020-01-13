@@ -12,7 +12,7 @@ import { BotFrameworkAdapter } from 'botbuilder';
 // const { TeamsConversationBot } = require('./bots/teamsConversationBot');
 
 // Read botFilePath and botFileSecret from .env file.
-const ENV_FILE = path.join(__dirname, '.env');
+const ENV_FILE = path.join(__dirname, '..','.env');
 require('dotenv').config({ path: ENV_FILE });
 
 // Create adapter.

@@ -1,0 +1,67 @@
+{
+    "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.5/MicrosoftTeams.schema.json",
+    "manifestVersion": "1.5",
+    "version": "1.0.0",
+    "id": "a797f4dc-c6f9-4880-9c07-028097467a17",
+    "packageName": "com.microsoft.standupbot",
+    "developer": {
+        "name": "Ben Brown",
+        "websiteUrl": "https://benbrown.com",
+        "privacyUrl": "https://privacy.microsoft.com/en-US/privacystatement",
+        "termsOfUseUrl": "https://privacy.microsoft.com/en-US/privacystatement"
+    },
+    "icons": {
+        "color": "color.png",
+        "outline": "outline.png"
+    },
+    "name": {
+        "short": "standup",
+        "full": "standup bot"
+    },
+    "description": {
+        "short": "a bot that facilitates remote team stand-up meetings",
+        "full": "this bot allows you to run remote team stand-up meetings by automating the process of collecting stand-up responses and sharing them to the main team in a standard format"
+    },
+    "accentColor": "#FFFFFF",
+    "bots": [
+        {
+            "botId": "4f82fff3-7cb4-4d50-8550-db736ba060a9",
+            "scopes": [
+                "personal",
+                "team",
+                "groupchat"
+            ],
+            "commandLists": [
+                {
+                    "scopes": [
+                        "team"
+                    ],
+                    "commands": [
+                        {
+                            "title": "start",
+                            "description": "start a standup"
+                        }
+                    ]
+                },
+                {
+                    "scopes": [
+                        "groupchat"
+                    ],
+                    "commands": [
+                        {
+                            "title": "start",
+                            "description": "start a standup"
+                        }
+                    ]
+                }
+            ],
+            "supportsFiles": true,
+            "isNotificationOnly": false
+        }
+    ],
+    "permissions": [
+        "identity",
+        "messageTeamMembers"
+    ],
+    "validDomains": []
+}
