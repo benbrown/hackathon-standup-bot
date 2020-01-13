@@ -4,10 +4,17 @@
   "description": "",
   "main": "lib/index.js",
   "scripts": {
-    "start":"node lib/index.js",
+    "start": "node lib/index.js",
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "benbro@microsoft.com",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "botbuilder": "^4.7.0",
+    "botbuilder-dialogs": "^4.7.0",
+    "dotenv": "^8.2.0",
+    "path": "^0.12.7",
+    "restify": "^8.5.1"
+  }
 }
