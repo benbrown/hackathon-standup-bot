@@ -1,0 +1,13 @@
+{
+  "name": "standupbot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "lib/index.js",
+  "scripts": {
+    "start":"node lib/index.js",
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "benbro@microsoft.com",
+  "license": "MIT"
+}
