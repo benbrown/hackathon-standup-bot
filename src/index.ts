@@ -65,7 +65,10 @@ let card_json = {
                   "type": "Action.Submit",
                   "title": "Begin My Stand-up",
                   "style": "positive",
-                  "id": "begin"
+                  "id": "begin",
+                  "data": {
+                    "command": "begin"
+                  },
               }
           ]
       }
@@ -77,12 +80,18 @@ let card_json = {
 server.post('/api/messages', (req, res) => {
     adapter.processActivity(req, res, async (context) => {
 
-      await context.sendActivity({
-        text: 'Hello',
-        attachments: [
-          CardFactory.adaptiveCard(card_json)
-        ]
-      });
-        // await bot.run(context);
+
+      console.log(JSON.stringify(context.activity, null, 2));
+
+      if (context.activity.value && context.activity.value.command == 'begin') {
+        await context.sendActivity('ok i will dm you');
+      } else {
+        await context.sendActivity({
+          text: 'Hello',
+          attachments: [
+            CardFactory.adaptiveCard(card_json)
+          ]
+        });
+      }
     });
 });
