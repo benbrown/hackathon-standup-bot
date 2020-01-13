@@ -6,7 +6,7 @@
 // Import required pckages
 import * as path from 'path';
 import * as restify from 'restify';
-import { BotFrameworkAdapter } from 'botbuilder';
+import { BotFrameworkAdapter, CardFactory } from 'botbuilder';
 
 
 // const { TeamsConversationBot } = require('./bots/teamsConversationBot');
@@ -50,10 +50,39 @@ server.listen(process.env.port || process.env.PORT || 3978, function() {
     console.log(`\n${ server.name } listening to ${ server.url }`);
 });
 
+let card_json = {
+  "type": "AdaptiveCard",
+  "version": "1.0",
+  "body": [
+      {
+          "type": "TextBlock",
+          "text": "It's time for a stand-up! Click the button below to start yours."
+      },
+      {
+          "type": "ActionSet",
+          "actions": [
+              {
+                  "type": "Action.Submit",
+                  "title": "Begin My Stand-up",
+                  "style": "positive",
+                  "id": "begin"
+              }
+          ]
+      }
+  ],
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json"
+};
+
 // Listen for incoming requests.
 server.post('/api/messages', (req, res) => {
     adapter.processActivity(req, res, async (context) => {
-      await context.sendActivity('got a message');
+
+      await context.sendActivity({
+        text: 'Hello',
+        attachments: [
+          CardFactory.adaptiveCard(card_json)
+        ]
+      });
         // await bot.run(context);
     });
 });
