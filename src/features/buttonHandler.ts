@@ -8,7 +8,7 @@ import {
   Handler,
 } from '../handler';
 
-import { standupDialog } from './dialogs/standup';
+import { standupDialog, standupPrompt } from './dialogs/standup';
 
 import * as Debug from 'debug'
 
@@ -19,7 +19,9 @@ debug('loading echo feature');
 export default (handler: Handler) => {
 
   // make the standup dialog available
+  // todo: instead of putting these in a dialogs/ folder, maybe just make it a feature
   handler.addDialog(standupDialog);
+  handler.addDialog(standupPrompt);
 
   handler.onMessage(async(context, next) => {
     if (context.activity.value && context.activity.value.command == 'begin') {
@@ -42,7 +44,9 @@ export default (handler: Handler) => {
       // and begin the dialog
       // and then save the state again...
       const dialogContext = await handler.dialogSet.createContext(private_context);
-      await dialogContext.beginDialog('STANDUP', {});
+      await dialogContext.beginDialog('STANDUP', {
+        originalContext: ref,
+      });
       await handler.saveState(private_context);
 
       // todo: not sure if we should call this inside the callback or outside...
