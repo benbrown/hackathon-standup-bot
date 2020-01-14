@@ -45,8 +45,10 @@ export class Handler extends TeamsActivityHandler {
         debug('Dialog results are empty, continuing...')
         await next();
       } else {
-        debug('Dialog results NOT empty, DO WHAT??');
-        await next();
+        // DO NOT call next here because we don't want other handlers firing.
+        // instead, jump to the last step IE save state and end.
+        // await next();
+        await this.saveState(context);
       }
     });
 

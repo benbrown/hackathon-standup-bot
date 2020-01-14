@@ -12,6 +12,10 @@ export default (handler: Handler) => {
   const standupDialog = new WaterfallDialog('STANDUP', [
     async(step) => {
       step.values['answers'] = [];
+      await step.context.sendActivity(`This is the stand-up for ${ step.options['team'].name } / ${ step.options['channel'].name }. Let's get started!`);
+      return await step.next();
+    }, 
+    async(step) => {
       return await step.prompt('TEXTPROMPT','What have you been working on since last stand-up?');
     }, 
     async(step) => {
@@ -24,6 +28,7 @@ export default (handler: Handler) => {
     }, 
     async(step) => {
       step.values['answers'].push(step.result);
+
       const results = {
         answers: step.values['answers'],
         originalContext: step.options['originalContext'],
@@ -31,6 +36,8 @@ export default (handler: Handler) => {
       };
 
       debug('Final results', results);
+
+      await step.context.sendActivity('Thanks for taking the time to respond!');
 
       await deliverReportToChannel(step.context.adapter as BotFrameworkAdapter, results);
 

@@ -29,6 +29,12 @@ export default (handler: Handler) => {
     // get more specific about what type of adapter this is cause the botadapter base class doesn't have createConversation and ts is complaining
     const adapter: BotFrameworkAdapter = context.adapter as BotFrameworkAdapter;
 
+    const teamDetails = await TeamsInfo.getTeamDetails(context);
+
+    const channelList = await TeamsInfo.getTeamChannels(context);
+
+    const thisChannel = channelList.filter((channel) => { return ref.conversation.id.indexOf(channel.id) === 0 });
+
     // create a 1:1 context...
     await adapter.createConversation(ref, async(private_context) => {
 
@@ -39,7 +45,10 @@ export default (handler: Handler) => {
       await dialogContext.beginDialog('STANDUP', {
         originalContext: ref,
         user: context.activity.from,
+        team: teamDetails,
+        channel: thisChannel[0],
       });
+
       await handler.saveState(private_context);
 
       // todo: not sure if we should call this inside the callback or outside...
