@@ -33,6 +33,7 @@ export default (handler: Handler) => {
 
     const channelList = await TeamsInfo.getTeamChannels(context);
 
+
     const thisChannel = channelList.filter((channel) => { return ref.conversation.id.indexOf(channel.id) === 0 });
 
     // create a 1:1 context...
