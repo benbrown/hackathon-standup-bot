@@ -6,11 +6,14 @@
 // Import required pckages
 import * as path from 'path';
 import * as restify from 'restify';
-import { BotFrameworkAdapter, CardFactory } from 'botbuilder';
+import { BotFrameworkAdapter, MemoryStorage, ConversationState } from 'botbuilder';
 
 import { Handler } from './handler';
 
-const bot = new Handler();
+const memoryStorage = new MemoryStorage();
+const conversationState = new ConversationState(memoryStorage);
+
+const bot = new Handler(conversationState);
 
 // const { TeamsConversationBot } = require('./bots/teamsConversationBot');
 

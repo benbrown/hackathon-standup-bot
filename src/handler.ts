@@ -5,26 +5,68 @@ import {
   TurnContext,
   TeamsActivityHandler,
   BotHandler,
+  ConversationState,
+  StatePropertyAccessor
 } from 'botbuilder';
+
+import {
+  Dialog,
+  DialogSet,
+  DialogTurnStatus
+} from 'botbuilder-dialogs';
 
 import * as Debug from 'debug'
 import * as path from 'path';
 import * as fs from 'fs';
 
+// import * as db from './model';
+
 const debug = Debug('bot:handler');
 
 export class Handler extends TeamsActivityHandler {
-  constructor() {
+  private conversationState: ConversationState;
+  private dialogState: StatePropertyAccessor<any>;
+  public dialogSet: DialogSet;
+
+  constructor(stateDriver: ConversationState) {
     super();
-  
+
+    this.conversationState = stateDriver;
+    this.dialogState = stateDriver.createProperty('DIALOG_STATE');
+    this.dialogSet = new DialogSet(this.dialogState);
+    
     // strip the @mention from the message so the bot doesn't have to deal with this internally
     this.onMessage(async(context, next) => {
       TurnContext.removeRecipientMention(context.activity);
+
+      const dialogContext = await this.dialogSet.createContext(context);
+      const results = await dialogContext.continueDialog();
+      if (results.status === DialogTurnStatus.empty) {
+        debug('Dialog results are empty, continuing...')
+        await next();
+      } else {
+        debug('Dialog results NOT empty, DO WHAT??');
+        await next();
+      }
+    });
+
+    this.onDialog(async(context, next) => {
+      debug('Saving conversation state!');
+      await this.saveState(context);
       await next();
     });
 
     this.loadFeatures(path.join(__dirname,'features'));
 
+  }
+
+  public addDialog = (dialog: Dialog):void => {
+    debug('Adding dialog', dialog.id);
+    this.dialogSet.add(dialog);
+  }
+
+  public saveState = async(context: TurnContext) => {
+    this.conversationState.saveChanges(context, false);
   }
 
   // expose these methods publicly so features can take advantage of the activity handler event system

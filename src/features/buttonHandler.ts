@@ -2,10 +2,13 @@
 // Licensed under the MIT License.
 
 import { TeamsInfo, TurnContext, BotFrameworkAdapter } from 'botbuilder';
+import { WaterfallDialog } from 'botbuilder-dialogs';
 
 import {
   Handler,
 } from '../handler';
+
+import { standupDialog } from './dialogs/standup';
 
 import * as Debug from 'debug'
 
@@ -14,6 +17,9 @@ const debug = Debug('bot:features:beginStandup');
 debug('loading echo feature');
 
 export default (handler: Handler) => {
+
+  // make the standup dialog available
+  handler.addDialog(standupDialog);
 
   handler.onMessage(async(context, next) => {
     if (context.activity.value && context.activity.value.command == 'begin') {
@@ -30,8 +36,18 @@ export default (handler: Handler) => {
 
     // create a 1:1 context...
     await adapter.createConversation(ref, async(private_context) => {
+
       await private_context.sendActivity('t1 your click.');
+      // I think we need to create a new dialog context here
+      // and begin the dialog
+      // and then save the state again...
+      const dialogContext = await handler.dialogSet.createContext(private_context);
+      await dialogContext.beginDialog('STANDUP', {});
+      await handler.saveState(private_context);
+
+      // todo: not sure if we should call this inside the callback or outside...
       await next();
+
     });
 
   });
