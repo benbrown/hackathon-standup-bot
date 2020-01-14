@@ -14,6 +14,7 @@
   "dependencies": {
     "botbuilder": "^4.7.0",
     "botbuilder-dialogs": "^4.7.0",
+    "botbuilder-lg": "^4.7.0-preview",
     "debug": "^4.1.1",
     "dotenv": "^8.2.0",
     "path": "^0.12.7",

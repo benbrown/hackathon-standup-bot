@@ -4,6 +4,10 @@ import * as Debug from 'debug'
 import { Handler } from '../handler';
 
 const debug = Debug('bot:dialog:standup');
+const { TemplateEngine } = require('botbuilder-lg');
+const path = require('path');
+
+let lgEngine = new TemplateEngine().addFile(path.join(__dirname, '../../resources/standupPrompts.lg'));
 
 export default (handler: Handler) => {
 
@@ -16,16 +20,16 @@ export default (handler: Handler) => {
       return await step.next();
     }, 
     async(step) => {
-      return await step.prompt('TEXTPROMPT','What have you been working on since last stand-up?');
+      return await step.prompt('TEXTPROMPT', lgEngine.evaluateTemplate("WorkingOnPastPrompt"));
     }, 
     async(step) => {
       step.values['answers'].push(step.result);
-      return await step.prompt('TEXTPROMPT','What will you be working on til our next stand-up?');
+      return await step.prompt('TEXTPROMPT', lgEngine.evaluateTemplate("WorkingOnNextPrompt"));
     }, 
     async(step) => {
       step.values['answers'].push(step.result);
-      return await step.prompt('TEXTPROMPT','Is there anything blocking your progress?');
-    }, 
+      return await step.prompt('TEXTPROMPT', lgEngine.evaluateTemplate("BlockerPrompt"));
+    },  
     async(step) => {
       step.values['answers'].push(step.result);
 
