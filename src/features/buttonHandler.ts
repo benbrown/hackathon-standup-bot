@@ -8,8 +8,6 @@ import {
   Handler,
 } from '../handler';
 
-import { standupDialog, standupPrompt } from './dialogs/standup';
-
 import * as Debug from 'debug'
 
 const debug = Debug('bot:features:beginStandup');
@@ -17,11 +15,6 @@ const debug = Debug('bot:features:beginStandup');
 debug('loading echo feature');
 
 export default (handler: Handler) => {
-
-  // make the standup dialog available
-  // todo: instead of putting these in a dialogs/ folder, maybe just make it a feature
-  handler.addDialog(standupDialog);
-  handler.addDialog(standupPrompt);
 
   handler.onMessage(async(context, next) => {
     if (context.activity.value && context.activity.value.command == 'begin') {
@@ -39,7 +32,6 @@ export default (handler: Handler) => {
     // create a 1:1 context...
     await adapter.createConversation(ref, async(private_context) => {
 
-      await private_context.sendActivity('t1 your click.');
       // I think we need to create a new dialog context here
       // and begin the dialog
       // and then save the state again...
