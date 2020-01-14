@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+import { TeamsInfo, TurnContext, BotFrameworkAdapter } from 'botbuilder';
+
 import {
   Handler,
 } from '../handler';
@@ -21,9 +23,17 @@ export default (handler: Handler) => {
   });
 
   handler.handleEvent('standupButtonClicked', async(context, next) => {
-    
-      await context.sendActivity('I got your click.');
+    let ref = TurnContext.getConversationReference(context.activity);
+
+    // get more specific about what type of adapter this is cause the botadapter base class doesn't have createConversation and ts is complaining
+    const adapter: BotFrameworkAdapter = context.adapter as BotFrameworkAdapter;
+
+    // create a 1:1 context...
+    await adapter.createConversation(ref, async(private_context) => {
+      await private_context.sendActivity('t1 your click.');
       await next();
+    });
+
   });
 
 

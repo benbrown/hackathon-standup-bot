@@ -3,9 +3,8 @@
 
 import { CardFactory, TurnContext } from 'botbuilder';
 
-import {
-  Handler,
-} from '../handler';
+import { Handler } from '../handler';
+import * as db from '../model';
 
 import * as Debug from 'debug'
 
