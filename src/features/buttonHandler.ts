@@ -38,6 +38,7 @@ export default (handler: Handler) => {
       const dialogContext = await handler.dialogSet.createContext(private_context);
       await dialogContext.beginDialog('STANDUP', {
         originalContext: ref,
+        user: context.activity.from,
       });
       await handler.saveState(private_context);
 

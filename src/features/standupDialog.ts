@@ -26,7 +26,8 @@ export default (handler: Handler) => {
       step.values['answers'].push(step.result);
       const results = {
         answers: step.values['answers'],
-        originalContext: step.options['originalContext']
+        originalContext: step.options['originalContext'],
+        user: step.options['user'],
       };
 
       debug('Final results', results);
@@ -39,7 +40,7 @@ export default (handler: Handler) => {
 
   const deliverReportToChannel = async(adapter: BotFrameworkAdapter, results: any): Promise<void> => {
     await adapter.continueConversation(results.originalContext, async(context) => {
-      await context.sendActivity('Someone finished a standup!');
+      await context.sendActivity(`${ results.user.name } finished a stand-up: \`\`\`${ JSON.stringify(results.answers, null, 2) }\`\`\``);
     });
   }
 
