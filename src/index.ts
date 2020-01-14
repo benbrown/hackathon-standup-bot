@@ -8,6 +8,9 @@ import * as path from 'path';
 import * as restify from 'restify';
 import { BotFrameworkAdapter, CardFactory } from 'botbuilder';
 
+import { Handler } from './handler';
+
+const bot = new Handler();
 
 // const { TeamsConversationBot } = require('./bots/teamsConversationBot');
 
@@ -80,18 +83,19 @@ let card_json = {
 server.post('/api/messages', (req, res) => {
     adapter.processActivity(req, res, async (context) => {
 
+      await bot.run(context);
 
-      console.log(JSON.stringify(context.activity, null, 2));
+      // console.log(JSON.stringify(context.activity, null, 2));
 
-      if (context.activity.value && context.activity.value.command == 'begin') {
-        await context.sendActivity('ok i will dm you');
-      } else {
-        await context.sendActivity({
-          text: 'Hello',
-          attachments: [
-            CardFactory.adaptiveCard(card_json)
-          ]
-        });
-      }
+      // if (context.activity.value && context.activity.value.command == 'begin') {
+      //   await context.sendActivity('ok i will dm you');
+      // } else {
+      //   await context.sendActivity({
+      //     text: 'Hello',
+      //     attachments: [
+      //       CardFactory.adaptiveCard(card_json)
+      //     ]
+      //   });
+      // }
     });
 });
