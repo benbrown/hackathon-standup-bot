@@ -97,7 +97,7 @@
             "items": [
                 {
                     "type": "TextBlock",
-                    "text": "Notes from @{meeting} in channel @{channel}",
+                    "text": "Notes from @{channel} in channel @{team}",
                     "size": "Large",
                     "wrap": true,
                     "weight": "Bolder"
