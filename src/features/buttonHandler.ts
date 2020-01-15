@@ -33,28 +33,36 @@ export default (handler: Handler) => {
 
     let currentStandup = await handler.db.getStandupForChannel(channelId);
 
-    // create a 1:1 context...
-    await adapter.createConversation(ref, async(private_context) => {
-
-      // I think we need to create a new dialog context here
-      // and begin the dialog
-      // and then save the state again...
-      const dialogContext = await handler.dialogSet.createContext(private_context);
-      await dialogContext.beginDialog('STANDUP', {
-        originalContext: ref,
-        user: context.activity.from,
-        team: currentStandup.team,
-        channel: currentStandup.channel,
-        channelId: currentStandup.channelId,
+    // check to make sure this particular user has not already responded
+    if (currentStandup.respondees.indexOf(context.activity.from.id) !== -1) {
+      await adapter.createConversation(ref, async(private_context) => {
+        await private_context.sendActivity('You already responded to this standup.');
+        await next();
       });
+    } else {
 
-      await handler.saveState(private_context);
+      // create a 1:1 context...
+      await adapter.createConversation(ref, async(private_context) => {
 
-      // todo: not sure if we should call this inside the callback or outside...
-      await next();
+        // I think we need to create a new dialog context here
+        // and begin the dialog
+        // and then save the state again...
+        const dialogContext = await handler.dialogSet.createContext(private_context);
+        await dialogContext.beginDialog('STANDUP', {
+          originalContext: ref,
+          user: context.activity.from,
+          team: currentStandup.team,
+          channel: currentStandup.channel,
+          channelId: currentStandup.channelId,
+        });
 
-    });
+        await handler.saveState(private_context);
 
+        // todo: not sure if we should call this inside the callback or outside...
+        await next();
+
+      });
+    }
   });
 
 

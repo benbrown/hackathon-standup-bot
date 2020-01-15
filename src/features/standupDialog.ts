@@ -60,9 +60,13 @@ export default (handler: Handler) => {
 
       let currentStandup = await handler.db.getStandupForChannel(results.channelId);
 
+      // add the user id to the list of users who have already responded to this.
+      currentStandup.respondees.push(results.user.id);
+
       // update this record with this user's answers
       for (let x = 0; x < results.answers.length; x++) {
         currentStandup.questions[x].participants.push({
+          id: results.user.id,
           name: results.user.name,
           response: results.answers[x],
         });
@@ -74,11 +78,13 @@ export default (handler: Handler) => {
 
       // update the original card with new stuff
       let activity = MessageFactory.text('```' + JSON.stringify(currentStandup, null, 2) + '```');
-      activity.id = currentStandup.original_card;
+      // activity.id = currentStandup.original_card;
+
+      await context.sendActivity(activity);
 
       debug('CARD TO UPDATE', activity);
 
-      await context.updateActivity(activity);
+      // await context.updateActivity(activity);
     });
   }
 

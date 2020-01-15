@@ -70,6 +70,7 @@ export default (handler: Handler) => {
     currentStandup.channelId = channelId;
     currentStandup.channel = thisChannel[0].name;
     currentStandup.team = teamDetails.name;
+    currentStandup.respondees = [];
     currentStandup.questions = [{
       text: 'What did you do yesterday?',
       participants: [],
