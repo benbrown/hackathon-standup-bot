@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 import { TeamsInfo, TurnContext, BotFrameworkAdapter } from 'botbuilder';
-import { WaterfallDialog } from 'botbuilder-dialogs';
 
 import {
   Handler,
@@ -16,7 +15,6 @@ export default (handler: Handler) => {
 
   handler.onMessage(async(context, next) => {
     if (context.activity.value && context.activity.value.command == 'begin') {
-      debug('Got payload from card: ', context.activity.value);
       return await handler.triggerEvent(context, 'standupButtonClicked',  next);
     }
     await next();
@@ -28,34 +26,43 @@ export default (handler: Handler) => {
     // get more specific about what type of adapter this is cause the botadapter base class doesn't have createConversation and ts is complaining
     const adapter: BotFrameworkAdapter = context.adapter as BotFrameworkAdapter;
 
-    const teamDetails = await TeamsInfo.getTeamDetails(context);
-
     const channelList = await TeamsInfo.getTeamChannels(context);
-
     const thisChannel = channelList.filter((channel) => { return ref.conversation.id.indexOf(channel.id) === 0 });
+    
+    const channelId = thisChannel[0].id;
 
-    // create a 1:1 context...
-    await adapter.createConversation(ref, async(private_context) => {
+    let currentStandup = await handler.db.getStandupForChannel(channelId);
 
-      // I think we need to create a new dialog context here
-      // and begin the dialog
-      // and then save the state again...
-      const dialogContext = await handler.dialogSet.createContext(private_context);
-      await dialogContext.beginDialog('STANDUP', {
-        originalContext: ref,
-        user: context.activity.from,
-        team: teamDetails,
-        channel: thisChannel[0],
-        original_card: context.activity.value.original_card,
+    // check to make sure this particular user has not already responded
+    if (currentStandup.respondees.indexOf(context.activity.from.id) !== -1) {
+      await adapter.createConversation(ref, async(private_context) => {
+        await private_context.sendActivity('You already responded to this standup.');
+        await next();
       });
+    } else {
 
-      await handler.saveState(private_context);
+      // create a 1:1 context...
+      await adapter.createConversation(ref, async(private_context) => {
 
-      // todo: not sure if we should call this inside the callback or outside...
-      await next();
+        // I think we need to create a new dialog context here
+        // and begin the dialog
+        // and then save the state again...
+        const dialogContext = await handler.dialogSet.createContext(private_context);
+        await dialogContext.beginDialog('STANDUP', {
+          originalContext: ref,
+          user: context.activity.from,
+          team: currentStandup.team,
+          channel: currentStandup.channel,
+          channelId: currentStandup.channelId,
+        });
 
-    });
+        await handler.saveState(private_context);
 
+        // todo: not sure if we should call this inside the callback or outside...
+        await next();
+
+      });
+    }
   });
 
 

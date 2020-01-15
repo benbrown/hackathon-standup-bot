@@ -6,7 +6,8 @@ import {
   TeamsActivityHandler,
   BotHandler,
   ConversationState,
-  StatePropertyAccessor
+  StatePropertyAccessor,
+  Storage
 } from 'botbuilder';
 
 import {
@@ -19,7 +20,7 @@ import * as Debug from 'debug'
 import * as path from 'path';
 import * as fs from 'fs';
 
-// import * as db from './model';
+import { Datastore } from './model';
 
 const debug = Debug('bot:handler');
 
@@ -27,13 +28,19 @@ export class Handler extends TeamsActivityHandler {
   private conversationState: ConversationState;
   private dialogState: StatePropertyAccessor<any>;
   public dialogSet: DialogSet;
+  private storage: Storage;
+  public db: Datastore;
 
-  constructor(stateDriver: ConversationState) {
+  constructor(storage: Storage) {
     super();
 
-    this.conversationState = stateDriver;
-    this.dialogState = stateDriver.createProperty('DIALOG_STATE');
+    this.storage = storage;
+    this.conversationState = new ConversationState(this.storage);
+    this.dialogState = this.conversationState.createProperty('DIALOG_STATE');
     this.dialogSet = new DialogSet(this.dialogState);
+
+    // configure the model accessor
+    this.db = new Datastore(this.storage);
     
     // strip the @mention from the message so the bot doesn't have to deal with this internally
     this.onMessage(async(context, next) => {
