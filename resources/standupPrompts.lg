@@ -97,7 +97,7 @@
             "items": [
                 {
                     "type": "TextBlock",
-                    "text": "Notes from @{channel} in channel @{team}",
+                    "text": "Notes for channel @{channel}",
                     "size": "Large",
                     "wrap": true,
                     "weight": "Bolder"
@@ -128,6 +128,7 @@
             "type": "TextBlock",
             "text": "@{question.text}",
             "size": "Large",
+            "color": "Accent",
             "weight": "Bolder"
         },
         {
@@ -148,7 +149,6 @@
 {
     "type": "TextBlock",
     "text": "@{participant.name}",
-    "color": "Accent",
     "size": "Medium",
     "weight": "Bolder"
 },

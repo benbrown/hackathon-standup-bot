@@ -79,7 +79,7 @@ export default (handler: Handler) => {
       ]
     };
     let summary = {
-      team: "stand-up",
+      team: "Standup",
       channel: "stand-up bot",
       questions: [
         question_1,
