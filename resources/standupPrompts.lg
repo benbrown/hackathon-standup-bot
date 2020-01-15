@@ -1,3 +1,10 @@
+# BeginStandupUsage
+- To begin a stand-up, say @standup begin inside a Team chat. I cannot start a new stand-up from inside a 1:1 chat.
+- To begin a stand-up, say @standup start inside a Team chat. I'm unable to start a new stand-up via a 1:1 chat.
+
+# BeginStandup
+- Hey @{user}. This is the stand-up for @{teamName} / @{channelName}. Let's get started!
+
 #  WorkingOnPastPrompt
 - What have you been working on since yesterday?
 - What have you been working on since last stand-up?
@@ -10,3 +17,63 @@
 # BlockerPrompt
 - Is there anything blocking your progress?
 - Are there any blockers?
+
+# ThankUserForCompletion
+- Thanks for taking the time to respond!
+
+# PrepareStandUpCard
+[Activity
+    Attachments = @{json(PrepareStandUpCardJson())}
+]
+
+# PrepareStandUpCardJson
+-```
+{
+    "type": "AdaptiveCard",
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "id": "PrepareStandUp",
+    "version": "1.0",
+    "body": [
+        {
+            "type": "TextBlock",
+            "text": "Preparing a new stand-up meeting..."
+        }
+    ]
+}
+```
+
+# StartStandUpCard
+[Activity
+    Attachments = @{json(StartStandUpCardJson())}
+]
+
+# StartStandUpCardJson
+-```
+{
+    "type": "AdaptiveCard",
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "id": "StartStandUp",
+    "version": "1.0",
+    "body": [
+        {
+            "type": "TextBlock",
+            "text": "It's time for a stand-up! Click the button below to start yours.",
+            "wrap": true
+        },
+        {
+            "type": "ActionSet",
+            "actions": [
+                {
+                    "type": "Action.Submit",
+                    "title": "Begin My Stand-up",
+                    "id": "begin",
+                    "data": {
+                        "command": "begin"
+                    }
+                }
+            ],
+            "horizontalAlignment": "Center"
+        }
+    ]
+}
+```

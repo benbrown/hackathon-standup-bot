@@ -15,8 +15,13 @@ export default (handler: Handler) => {
 
   const standupDialog = new WaterfallDialog('STANDUP', [
     async(step) => {
+      let user = step.options['user'].name;
+      let teamName = step.options['team'].name;
+      let channelName = step.options['channel'].name;
+
       step.values['answers'] = [];
-      await step.context.sendActivity(`This is the stand-up for ${ step.options['team'].name } / ${ step.options['channel'].name }. Let's get started!`);
+
+      await step.context.sendActivity(lgEngine.evaluateTemplate("BeginStandup", { user, teamName, channelName }));     
       return await step.next();
     }, 
     async(step) => {
@@ -41,7 +46,7 @@ export default (handler: Handler) => {
 
       debug('Final results', results);
 
-      await step.context.sendActivity('Thanks for taking the time to respond!');
+      await step.context.sendActivity(lgEngine.evaluateTemplate("ThankUserForCompletion"));
 
       await deliverReportToChannel(step.context.adapter as BotFrameworkAdapter, results);
 

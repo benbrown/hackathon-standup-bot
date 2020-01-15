@@ -9,44 +9,10 @@ import * as Debug from 'debug'
 
 const debug = Debug('bot:features:beginStandup');
 
-const prep_json = {
-  "type": "AdaptiveCard",
-  "version": "1.0",
-  "body": [
-      {
-          "type": "TextBlock",
-          "text": "Preparing a new stand-up meeting..."
-      },
-  ],
-  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json"
-};
+const {     ActivityFactory, TemplateEngine } = require('botbuilder-lg');
+const path = require('path');
 
-const card_json = {
-  "type": "AdaptiveCard",
-  "version": "1.0",
-  "body": [
-      {
-          "type": "TextBlock",
-          "text": "It's time for a stand-up! Click the button below to start yours."
-      },
-      {
-          "type": "ActionSet",
-          "actions": [
-              {
-                  "type": "Action.Submit",
-                  "title": "Begin My Stand-up",
-                  "style": "positive",
-                  "id": "begin",
-                  "data": {
-                    "command": "begin"
-                  },
-              }
-          ]
-      }
-  ],
-  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json"
-};
-
+let lgEngine = new TemplateEngine().addFile(path.join(__dirname, '../../resources/standupPrompts.lg'));
 
 export default (handler: Handler) => {
 
@@ -66,7 +32,7 @@ export default (handler: Handler) => {
   });
 
   handler.handleEvent('beginStandupUsage', async(context, next) => {
-    await context.sendActivity('To begin a stand-up, say @standup begin inside a Team chat. I cannot start a new stand-up from inside a 1:1 chat.');
+    await context.sendActivity(lgEngine.evaluateTemplate("BeginStandupUsage"));
     await next();
   });
 
@@ -75,18 +41,16 @@ export default (handler: Handler) => {
     const reference = TurnContext.getConversationReference(context.activity);
     debug('got conversation reference', reference);
 
-    let card1 = MessageFactory.attachment(CardFactory.adaptiveCard(prep_json));
-
-    // send initial message, and capture the id so we can update it later.
-    const results = await context.sendActivity(card1);
+    // send initial message, and capture the id so we can update it later.    
+    const results = await context.sendActivity(ActivityFactory.createActivity(lgEngine.evaluateTemplate("PrepareStandUpCard")));
 
     // TODO: when we've got a template based card, we'll actually pass the activityId through so it can be used on the other end
     // to update the card as people reply, etc.
-    let card2 = MessageFactory.attachment(CardFactory.adaptiveCard(card_json));
-    card2.id = results.id;
+    let startStandUpCard = ActivityFactory.createActivity(lgEngine.evaluateTemplate("StartStandUpCard"));
+    startStandUpCard.id = results.id;
 
     // replace message with a card
-    await context.updateActivity(card2);
+    await context.updateActivity(startStandUpCard);
 
     // this should let us update the message...
     debug('RESULTS OF SEND', results);
