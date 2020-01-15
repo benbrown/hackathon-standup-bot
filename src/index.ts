@@ -11,9 +11,8 @@ import { BotFrameworkAdapter, MemoryStorage, ConversationState } from 'botbuilde
 import { Handler } from './handler';
 
 const memoryStorage = new MemoryStorage();
-const conversationState = new ConversationState(memoryStorage);
 
-const bot = new Handler(conversationState);
+const bot = new Handler(memoryStorage);
 
 // const { TeamsConversationBot } = require('./bots/teamsConversationBot');
 

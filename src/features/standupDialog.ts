@@ -16,8 +16,8 @@ export default (handler: Handler) => {
   const standupDialog = new WaterfallDialog('STANDUP', [
     async(step) => {
       let user = step.options['user'].name;
-      let teamName = step.options['team'].name;
-      let channelName = step.options['channel'].name;
+      let teamName = step.options['team'];
+      let channelName = step.options['channel'];
 
       step.values['answers'] = [];
 
@@ -41,30 +41,43 @@ export default (handler: Handler) => {
       const results = {
         answers: step.values['answers'],
         originalContext: step.options['originalContext'],
+        channelId: step.options['channelId'],
         user: step.options['user'],
-        original_card: step.options['original_card'],
       };
 
       debug('Final results', results);
 
       await step.context.sendActivity(lgEngine.evaluateTemplate("ThankUserForCompletion"));
 
-      await deliverReportToChannel(step.context.adapter as BotFrameworkAdapter, results, step.context);
+      await deliverReportToChannel(step.context.adapter as BotFrameworkAdapter, results);
 
       return await step.endDialog(results);
     }
   ]);
 
-  const deliverReportToChannel = async(adapter: BotFrameworkAdapter, results: any, context: TurnContext): Promise<void> => {
+  const deliverReportToChannel = async(adapter: BotFrameworkAdapter, results: any): Promise<void> => {
     await adapter.continueConversation(results.originalContext, async(context) => {
+
+      let currentStandup = await handler.db.getStandupForChannel(results.channelId);
+
+      // update this record with this user's answers
+      for (let x = 0; x < results.answers.length; x++) {
+        currentStandup.questions[x].participants.push({
+          name: results.user.name,
+          response: results.answers[x],
+        });
+      }
+      
+      await handler.db.saveStandup(currentStandup);
+
       await context.sendActivity(`${ results.user.name } finished a stand-up: \`\`\`${ JSON.stringify(results.answers, null, 2) }\`\`\``);
 
       // update the original card with new stuff
-      let activity = MessageFactory.text(`${ results.user.name } finished a stand-up: \`\`\`${ JSON.stringify(results.answers, null, 2) }\`\`\``);
-      activity.id = results.original_card;
+      let activity = MessageFactory.text('```' + JSON.stringify(currentStandup, null, 2) + '```');
+      activity.id = currentStandup.original_card;
 
       debug('CARD TO UPDATE', activity);
-      
+
       await context.updateActivity(activity);
     });
   }

@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 import { TeamsInfo, TurnContext, BotFrameworkAdapter } from 'botbuilder';
-import { WaterfallDialog } from 'botbuilder-dialogs';
 
 import {
   Handler,
@@ -16,7 +15,6 @@ export default (handler: Handler) => {
 
   handler.onMessage(async(context, next) => {
     if (context.activity.value && context.activity.value.command == 'begin') {
-      debug('Got payload from card: ', context.activity.value);
       return await handler.triggerEvent(context, 'standupButtonClicked',  next);
     }
     await next();
@@ -28,11 +26,12 @@ export default (handler: Handler) => {
     // get more specific about what type of adapter this is cause the botadapter base class doesn't have createConversation and ts is complaining
     const adapter: BotFrameworkAdapter = context.adapter as BotFrameworkAdapter;
 
-    const teamDetails = await TeamsInfo.getTeamDetails(context);
-
     const channelList = await TeamsInfo.getTeamChannels(context);
-
     const thisChannel = channelList.filter((channel) => { return ref.conversation.id.indexOf(channel.id) === 0 });
+    
+    const channelId = thisChannel[0].id;
+
+    let currentStandup = await handler.db.getStandupForChannel(channelId);
 
     // create a 1:1 context...
     await adapter.createConversation(ref, async(private_context) => {
@@ -44,9 +43,9 @@ export default (handler: Handler) => {
       await dialogContext.beginDialog('STANDUP', {
         originalContext: ref,
         user: context.activity.from,
-        team: teamDetails,
-        channel: thisChannel[0],
-        original_card: context.activity.value.original_card,
+        team: currentStandup.team,
+        channel: currentStandup.channel,
+        channelId: currentStandup.channelId,
       });
 
       await handler.saveState(private_context);

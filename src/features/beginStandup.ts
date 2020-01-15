@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-import { CardFactory, TurnContext, MessageFactory } from 'botbuilder';
+import {  TurnContext, TeamsInfo } from 'botbuilder';
 
 import { Handler } from '../handler';
 
@@ -9,7 +9,7 @@ import * as Debug from 'debug'
 
 const debug = Debug('bot:features:beginStandup');
 
-const {     ActivityFactory, TemplateEngine } = require('botbuilder-lg');
+const { ActivityFactory, TemplateEngine } = require('botbuilder-lg');
 const path = require('path');
 
 let lgEngine = new TemplateEngine().addFile(path.join(__dirname, '../../resources/standupPrompts.lg'));
@@ -38,22 +38,52 @@ export default (handler: Handler) => {
 
   handler.handleEvent('beginStandup', async(context, next) => {
 
+    // first, we need to get the channel id.
     const reference = TurnContext.getConversationReference(context.activity);
-    debug('got conversation reference', reference);
+
+    const teamDetails = await TeamsInfo.getTeamDetails(context);
+    const channelList = await TeamsInfo.getTeamChannels(context);
+    const thisChannel = channelList.filter((channel) => { return reference.conversation.id.indexOf(channel.id) === 0 });
+    
+    const channelId = thisChannel[0].id;
+
+    let currentStandup = await handler.db.getStandupForChannel(channelId);
+    // debug('got current standup: ', currentStandup);
+
+    if (currentStandup) {
+      // end this standup.
+      // perhaps we want to do some final action here, like update the card to REMOVE THE BUTTON
+    } else {
+      // debug('creating new standup');
+      currentStandup = {};
+    }
 
     // send initial message, and capture the id so we can update it later.    
-    const results = await context.sendActivity(ActivityFactory.createActivity(lgEngine.evaluateTemplate("PrepareStandUpCard")));
+    // const results = await context.sendActivity(ActivityFactory.createActivity(lgEngine.evaluateTemplate("PrepareStandUpCard")));
 
-    // TODO: when we've got a template based card, we'll actually pass the activityId through so it can be used on the other end
-    // to update the card as people reply, etc.
-    let startStandUpCard = ActivityFactory.createActivity(lgEngine.evaluateTemplate("StartStandUpCard",{cardId: results.id}));
-    startStandUpCard.id = results.id;
+    let startStandUpCard = ActivityFactory.createActivity(lgEngine.evaluateTemplate("StartStandUpCard"));
 
     // replace message with a card
-    await context.updateActivity(startStandUpCard);
+    const results = await context.sendActivity(startStandUpCard);
 
-    // this should let us update the message...
-    debug('RESULTS OF SEND', results);
+    currentStandup.original_card = results.id;
+    currentStandup.channelId = channelId;
+    currentStandup.channel = thisChannel[0].name;
+    currentStandup.team = teamDetails.name;
+    currentStandup.questions = [{
+      text: 'What did you do yesterday?',
+      participants: [],
+    },
+    {
+      text: 'What are you doing today?',
+      participants: [],
+    },
+    {
+      text: 'Is anything blocking your progress?',
+      participants: [],
+    }];
+
+    await handler.db.saveStandup(currentStandup);
 
     await next();
 

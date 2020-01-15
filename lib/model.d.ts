@@ -1,11 +1,12 @@
-interface ops {
+import { Storage } from 'botbuilder';
+export interface StandupRec {
     [key: string]: any;
 }
-declare class Datastore {
-    options: ops;
-    constructor(options: ops);
-    set(key: string, val: any): Promise<void>;
-    get(key: any): Promise<any>;
+export declare class Datastore {
+    private storage;
+    constructor(storage: Storage);
+    getStandupForChannel(channelId: string): Promise<any>;
+    saveStandup(standup: StandupRec): Promise<void>;
+    deleteStandupForChannel(channelId: string): Promise<void>;
+    private makeKey;
 }
-declare const _default: Datastore;
-export default _default;
