@@ -4,7 +4,8 @@ import * as Debug from 'debug'
 import { Handler } from '../handler';
 
 const debug = Debug('bot:dialog:standup');
-const { TemplateEngine } = require('botbuilder-lg');
+const { ActivityFactory, TemplateEngine } = require('botbuilder-lg');
+
 const path = require('path');
 
 let lgEngine = new TemplateEngine().addFile(path.join(__dirname, '../../resources/standupPrompts.lg'));
@@ -77,7 +78,7 @@ export default (handler: Handler) => {
       await context.sendActivity(`${ results.user.name } finished a stand-up: \`\`\`${ JSON.stringify(results.answers, null, 2) }\`\`\``);
 
       // update the original card with new stuff
-      let activity = MessageFactory.text('```' + JSON.stringify(currentStandup, null, 2) + '```');
+      let activity = ActivityFactory.createActivity(lgEngine.evaluateTemplate("SummaryCard", currentStandup))
       // activity.id = currentStandup.original_card;
 
       await context.sendActivity(activity);
