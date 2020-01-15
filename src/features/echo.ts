@@ -9,14 +9,11 @@ import * as Debug from 'debug'
 
 const debug = Debug('bot:features:echo');
 
-debug('loading echo feature');
-
 export default (handler: TeamsActivityHandler) => {
 
-  // handler.onMessage(async(context, next) => {
-  //     debug('echoing incoming message', context.activity.text);
-  //     await context.sendActivity('Echo: ' + context.activity.text);
-  //     await next();
-  // });
+  handler.onMessage(async(context, next) => {
+      debug('INCOMING >', JSON.stringify(context.activity, null, 2));
+      await next();
+  });
 
 }

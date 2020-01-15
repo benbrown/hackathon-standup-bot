@@ -12,12 +12,11 @@ import * as Debug from 'debug'
 
 const debug = Debug('bot:features:beginStandup');
 
-debug('loading echo feature');
-
 export default (handler: Handler) => {
 
   handler.onMessage(async(context, next) => {
     if (context.activity.value && context.activity.value.command == 'begin') {
+      debug('Got payload from card: ', context.activity.value);
       return await handler.triggerEvent(context, 'standupButtonClicked',  next);
     }
     await next();
@@ -33,7 +32,6 @@ export default (handler: Handler) => {
 
     const channelList = await TeamsInfo.getTeamChannels(context);
 
-
     const thisChannel = channelList.filter((channel) => { return ref.conversation.id.indexOf(channel.id) === 0 });
 
     // create a 1:1 context...
@@ -48,6 +46,7 @@ export default (handler: Handler) => {
         user: context.activity.from,
         team: teamDetails,
         channel: thisChannel[0],
+        original_card: context.activity.value.original_card,
       });
 
       await handler.saveState(private_context);

@@ -1,5 +1,5 @@
-import { BotFrameworkAdapter } from 'botbuilder';
-import { WaterfallDialog, TextPrompt } from 'botbuilder-dialogs';
+import { BotFrameworkAdapter, MessageFactory, TurnContext } from 'botbuilder';
+import { WaterfallDialog, TextPrompt  } from 'botbuilder-dialogs';
 import * as Debug from 'debug'
 import { Handler } from '../handler';
 
@@ -42,21 +42,30 @@ export default (handler: Handler) => {
         answers: step.values['answers'],
         originalContext: step.options['originalContext'],
         user: step.options['user'],
+        original_card: step.options['original_card'],
       };
 
       debug('Final results', results);
 
       await step.context.sendActivity(lgEngine.evaluateTemplate("ThankUserForCompletion"));
 
-      await deliverReportToChannel(step.context.adapter as BotFrameworkAdapter, results);
+      await deliverReportToChannel(step.context.adapter as BotFrameworkAdapter, results, step.context);
 
       return await step.endDialog(results);
     }
   ]);
 
-  const deliverReportToChannel = async(adapter: BotFrameworkAdapter, results: any): Promise<void> => {
+  const deliverReportToChannel = async(adapter: BotFrameworkAdapter, results: any, context: TurnContext): Promise<void> => {
     await adapter.continueConversation(results.originalContext, async(context) => {
       await context.sendActivity(`${ results.user.name } finished a stand-up: \`\`\`${ JSON.stringify(results.answers, null, 2) }\`\`\``);
+
+      // update the original card with new stuff
+      let activity = MessageFactory.text(`${ results.user.name } finished a stand-up: \`\`\`${ JSON.stringify(results.answers, null, 2) }\`\`\``);
+      activity.id = results.original_card;
+
+      debug('CARD TO UPDATE', activity);
+      
+      await context.updateActivity(activity);
     });
   }
 

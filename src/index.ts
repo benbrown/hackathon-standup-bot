@@ -61,20 +61,6 @@ server.listen(process.env.port || process.env.PORT || 3978, function() {
 // Listen for incoming requests.
 server.post('/api/messages', (req, res) => {
     adapter.processActivity(req, res, async (context) => {
-
       await bot.run(context);
-
-      // console.log(JSON.stringify(context.activity, null, 2));
-
-      // if (context.activity.value && context.activity.value.command == 'begin') {
-      //   await context.sendActivity('ok i will dm you');
-      // } else {
-      //   await context.sendActivity({
-      //     text: 'Hello',
-      //     attachments: [
-      //       CardFactory.adaptiveCard(card_json)
-      //     ]
-      //   });
-      // }
     });
 });

@@ -18,7 +18,7 @@ export default (handler: Handler) => {
 
   handler.onMessage(async(context, next) => {
     if (context.activity.text) {
-      debug('evaluating text for a command', context.activity.text);
+      debug('evaluating text for start command:', context.activity.text);
       if (context.activity.text.match(/^(start|begin)/i)) {
         if (context.activity.conversation.conversationType === 'channel') {
           // todo: test to see if this is part of an ongoing 
@@ -46,7 +46,7 @@ export default (handler: Handler) => {
 
     // TODO: when we've got a template based card, we'll actually pass the activityId through so it can be used on the other end
     // to update the card as people reply, etc.
-    let startStandUpCard = ActivityFactory.createActivity(lgEngine.evaluateTemplate("StartStandUpCard"));
+    let startStandUpCard = ActivityFactory.createActivity(lgEngine.evaluateTemplate("StartStandUpCard",{cardId: results.id}));
     startStandUpCard.id = results.id;
 
     // replace message with a card

@@ -68,7 +68,8 @@
                     "title": "Begin My Stand-up",
                     "id": "begin",
                     "data": {
-                        "command": "begin"
+                        "command": "begin",
+                        "original_card": "@{cardId}"
                     }
                 }
             ],
