@@ -2,3 +2,5 @@
 node_modules
 
 *.sqlite
+.vs/hackathon-standup-bot/v16/.suo
+.vs/VSWorkspaceState.json

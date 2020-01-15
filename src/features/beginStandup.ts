@@ -9,7 +9,7 @@ import * as Debug from 'debug'
 
 const debug = Debug('bot:features:beginStandup');
 
-const {     ActivityFactory, TemplateEngine } = require('botbuilder-lg');
+const { ActivityFactory, TemplateEngine } = require('botbuilder-lg');
 const path = require('path');
 
 let lgEngine = new TemplateEngine().addFile(path.join(__dirname, '../../resources/standupPrompts.lg'));

@@ -78,3 +78,83 @@
     ]
 }
 ```
+
+# SummaryCard
+[Activity
+    Attachments = @{json(SummaryCardJson())}
+]
+
+# SummaryCardJson
+-```
+{
+    "type": "AdaptiveCard",
+    "version": "1.0",
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "id": "SummaryCard",
+    "body": [
+        {
+            "id": "TitleContainer",
+            "type": "Container",
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "text": "Notes from @{meeting} in channel @{channel}",
+                    "size": "Large",
+                    "wrap": true,
+                    "weight": "Bolder"
+                }
+            ]
+        },
+        {
+            "id": "QuestionsContainer",
+            "type": "Container",
+            "items": [
+                @{QuestionContainerCard(questions)}
+            ]
+        }
+    ]
+}
+```
+
+# QuestionContainerCard(questions)
+- @{join(foreach(questions, x, QuestionCard(x)), ', ')}
+
+# QuestionCard(question)
+-```
+{
+    "type": "Container",
+    "items": [
+        {
+            "type": "TextBlock",
+            "text": "@{question.text}",
+            "size": "Large",
+            "weight": "Bolder"
+        },
+        {
+            "id": "ParticipantsContainer",
+            "type": "Container",
+            "items": [
+                @{ParticipantsContainerCard(question.participants)}
+            ]
+        }
+    ]
+}
+```
+
+# ParticipantsContainerCard(participants)
+- @{join(foreach(participants, x, ParticipantsCard(x)), ', ')}
+
+# ParticipantsCard(participant)
+-```
+{
+    "type": "TextBlock",
+    "text": "@{participant.name}",
+    "color": "Accent",
+    "size": "Large"
+},
+{
+    "type": "TextBlock",
+    "text": "@{participant.response}",
+    "wrap": true
+}
+```
