@@ -107,6 +107,7 @@
         {
             "id": "QuestionsContainer",
             "type": "Container",
+            "separator": true,
             "items": [
                 @{QuestionContainerCard(questions)}
             ]
@@ -130,7 +131,6 @@
             "weight": "Bolder"
         },
         {
-            "id": "ParticipantsContainer",
             "type": "Container",
             "items": [
                 @{ParticipantsContainerCard(question.participants)}
@@ -149,7 +149,8 @@
     "type": "TextBlock",
     "text": "@{participant.name}",
     "color": "Accent",
-    "size": "Large"
+    "size": "Medium",
+    "weight": "Bolder"
 },
 {
     "type": "TextBlock",
