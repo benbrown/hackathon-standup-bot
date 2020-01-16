@@ -9,6 +9,7 @@ import {
   StatePropertyAccessor,
   Storage,
   TaskModuleRequest,
+  TeamsInfo,
   TaskModuleResponse
 } from 'botbuilder';
 
@@ -24,8 +25,8 @@ import * as fs from 'fs';
 
 import { Datastore } from './model';
 
-const { TemplateEngine } = require('botbuilder-lg');
-const lgEngine = new TemplateEngine().addFile(path.join(__dirname, '../../resources/standupPrompts.lg'));
+const { ActivityFactory, TemplateEngine } = require('botbuilder-lg');
+const lgEngine = new TemplateEngine().addFile(path.join(__dirname, '../resources/standupPrompts.lg'));
 
 const debug = Debug('bot:handler');
 
@@ -112,24 +113,47 @@ export class Handler extends TeamsActivityHandler {
     module.default(this);
   }
 
-  protected async handleTeamsTaskModuleFetch(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse> {
-    debug('handleTeamsTaskModuleFetch', context.activity, taskModuleRequest);
+  protected async handleTeamsTaskModuleFetch(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<any> {
+
+    const channelList = await TeamsInfo.getTeamChannels(context);
+    const thisChannel = channelList.filter((channel) => { return context.activity.conversation.id.indexOf(channel.id) === 0 });
+    const channelId = thisChannel[0].id;
+
+    let schedule = await this.db.getScheduleForChannel(channelId);
+
+    debug('got current schedule', schedule);
+
+    if (!schedule) {
+      schedule = {
+        Monday: 'true',
+        Tuesday: 'true',
+        Wednesday: 'true',
+        Thursday: 'true',
+        Friday: 'true',
+        Saturday: 'false',
+        Sunday: 'false',
+        MeetingTime: '10:00 AM'
+      }
+    }
+
+    const message = ActivityFactory.createActivity(lgEngine.evaluateTemplate("ScheduleCard", {schedule: schedule}));
+
     return {
       task: {
           type: 'continue',
           value: {
-              card: this.getTaskModuleAdaptiveCard(),
-              height: 220,
+              card: message.attachments[0],
+              height: 450,
               width: 400,
               title: 'Schedule'
           }
       }
-  };
-    // throw new Error('NotImplemented');
+    };
   }
 
-  protected async handleTeamsTaskModuleSubmit(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse> {
-    debug('handleTeamsTaskModuleSubmit', context.activity);
+  protected async handleTeamsTaskModuleSubmit(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<any> {
+    await this.triggerEvent(context, 'updateSchedule', async() => {});
+    return;
   }
 
 }

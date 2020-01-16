@@ -49,7 +49,7 @@ export default (handler: Handler) => {
     const card = CardFactory.heroCard('Stand-up Schedule',
     'Current schedule is...',
     null, // No images
-    [{ type: 'invoke', title: 'Change Schedule', value: { type: 'task/fetch', data: 'adaptivecard' } }]);
+    [{ type: 'invoke', title: 'Set Schedule', value: { type: 'task/fetch', data: 'showSchedule' } }]);
     const message = MessageFactory.attachment(card);
     await context.sendActivity(message);
 
@@ -57,6 +57,20 @@ export default (handler: Handler) => {
 
   });
 
-  handler.onInvoke
+  handler.handleEvent('updateSchedule', async(context, next) => {
+    const channelList = await TeamsInfo.getTeamChannels(context);
+    const thisChannel = channelList.filter((channel) => { return context.activity.conversation.id.indexOf(channel.id) === 0 });
+    const channelId = thisChannel[0].id;
 
+    debug('Update schedule for', channelId);
+    debug('UPDATE ACTIVITY', context.activity.value.data);
+
+    await handler.db.setScheduleForChannel(channelId, context.activity.value.data);
+
+    // todo update the card used to trigger the task?
+    await context.sendActivity('The stand-up schedule was updated by ' + context.activity.from.name);
+
+    await next();
+
+  })
 }

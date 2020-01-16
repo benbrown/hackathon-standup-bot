@@ -32,6 +32,30 @@ export class Datastore {
     return await this.storage.delete([this.makeKey(channelId)]);
   }
 
+  public async setScheduleForChannel(channelId: string, schedule: any) {
+    let res = await this.storage.read(['schedule']);
+    let current_schedule= {};  
+    if (res['schedule']) {
+      current_schedule = res['schedule'];
+    } else {
+      current_schedule = {};
+    }
+    current_schedule[channelId] = schedule;
+    return await this.storage.write({'schedule': current_schedule});
+  }
+
+  public async getScheduleForChannel(channelId: string) {
+    let res = await this.storage.read(['schedule']);
+    let current_schedule= {};  
+    if (res['schedule']) {
+      current_schedule = res['schedule'];
+    } else {
+      current_schedule = {};
+    }
+
+    return current_schedule[channelId];
+  }
+
   private makeKey(channelId: string) {
     return `${ channelId }-standup`;
   }
