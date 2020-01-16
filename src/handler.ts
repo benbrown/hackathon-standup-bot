@@ -10,7 +10,8 @@ import {
   Storage,
   TaskModuleRequest,
   TeamsInfo,
-  TaskModuleResponse
+  TaskModuleResponse,
+  BotFrameworkAdapter
 } from 'botbuilder';
 
 import {
@@ -36,10 +37,12 @@ export class Handler extends TeamsActivityHandler {
   public dialogSet: DialogSet;
   private storage: Storage;
   public db: Datastore;
+  public adapter: BotFrameworkAdapter;
 
-  constructor(storage: Storage) {
+  constructor(storage: Storage, adapter: BotFrameworkAdapter) {
     super();
 
+    this.adapter = adapter;
     this.storage = storage;
     this.conversationState = new ConversationState(this.storage);
     this.dialogState = this.conversationState.createProperty('DIALOG_STATE');

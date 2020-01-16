@@ -6,11 +6,12 @@ import {  MessageFactory, CardFactory, TurnContext, TeamsInfo } from 'botbuilder
 import { Handler } from '../handler';
 
 import * as Debug from 'debug'
+import * as path  from 'path';
+import * as scheduler from 'node-schedule';
 
 const debug = Debug('bot:features:scheduler');
 
 const { TemplateEngine } = require('botbuilder-lg');
-const path = require('path');
 
 let lgEngine = new TemplateEngine().addFile(path.join(__dirname, '../../resources/standupPrompts.lg'));
 
@@ -65,12 +66,82 @@ export default (handler: Handler) => {
     debug('Update schedule for', channelId);
     debug('UPDATE ACTIVITY', context.activity.value.data);
 
-    await handler.db.setScheduleForChannel(channelId, context.activity.value.data);
+    let schedule = {
+      ...context.activity.value.data,
+      reference: TurnContext.getConversationReference(context.activity)
+    }
+    await handler.db.setScheduleForChannel(channelId, schedule);
 
     // todo update the card used to trigger the task?
     await context.sendActivity('The stand-up schedule was updated by ' + context.activity.from.name);
 
-    await next();
+    buildCron();
 
-  })
+    await next();
+  });
+
+  const buildCron = async() => {
+    const schedule = await handler.db.getSchedule();
+    debug('entire schedule:', schedule);
+
+    for (const channelId in schedule) {
+      const channel_schedule = schedule[channelId];
+      if (channel_schedule.MeetingTime) {
+        scheduler.cancelJob(channelId);
+        scheduler.scheduleJob(channelId, scheduleToCron(channel_schedule), runSchedule(channelId));
+      }
+    }
+  }
+
+  const scheduleToCron = (schedule) => {
+    debug('schedule:', schedule);
+    let [hour, minute] = schedule.MeetingTime.split(/\:/);
+
+    let daysofweek = []
+    if (schedule.Sunday == 'true') {
+      daysofweek.push(0);
+    }
+    if (schedule.Monday == 'true') {
+      daysofweek.push(1);
+    }
+    if (schedule.Tuesday == 'true') {
+      daysofweek.push(2);
+    }
+    if (schedule.Wednesday == 'true') {
+      daysofweek.push(3);
+    }
+    if (schedule.Thursday == 'true') {
+      daysofweek.push(4);
+    }
+    if (schedule.Friday == 'true') {
+      daysofweek.push(5);
+    }
+    if (schedule.Saturday == 'true') {
+      daysofweek.push(6);
+    }
+
+    let cron = `0 ${ parseInt(minute) } ${ parseInt(hour) } * * ${ daysofweek.join(',') }`;
+    debug('schedule:', schedule);
+    debug('cron: ', cron);
+    return cron;
+  }
+
+  const runSchedule = (channelId: string) => {
+    return async() => {
+      debug('RUN SCHEDULE FOR CHANNEL', channelId);
+
+      const schedule = await handler.db.getScheduleForChannel(channelId);
+
+      schedule.reference.conversation.id = schedule.reference.conversation.id.replace(/\;messageid\=.*/,'');
+      debug('SCHEDULE:', schedule);
+
+      await handler.adapter.continueConversation(schedule.reference,
+            async (context) => {
+              return await handler.triggerEvent(context, 'beginStandup', async() => {});
+            }
+      );
+
+    }
+  }
+
 }

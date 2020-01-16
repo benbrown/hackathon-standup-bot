@@ -56,6 +56,17 @@ export class Datastore {
     return current_schedule[channelId];
   }
 
+  public async getSchedule() {
+    let res = await this.storage.read(['schedule']);
+    let current_schedule= {};  
+    if (res['schedule']) {
+      current_schedule = res['schedule'];
+    } else {
+      current_schedule = {};
+    }
+    return current_schedule;
+  }
+
   private makeKey(channelId: string) {
     return `${ channelId }-standup`;
   }

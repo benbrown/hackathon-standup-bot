@@ -10,5 +10,6 @@ export declare class Datastore {
     deleteStandupForChannel(channelId: string): Promise<void>;
     setScheduleForChannel(channelId: string, schedule: any): Promise<void>;
     getScheduleForChannel(channelId: string): Promise<any>;
+    getSchedule(): Promise<{}>;
     private makeKey;
 }

@@ -12,8 +12,6 @@ import { Handler } from './handler';
 
 const memoryStorage = new MemoryStorage();
 
-const bot = new Handler(memoryStorage);
-
 // const { TeamsConversationBot } = require('./bots/teamsConversationBot');
 
 // Read botFilePath and botFileSecret from .env file.
@@ -26,6 +24,9 @@ const adapter = new BotFrameworkAdapter({
     appId: process.env.MicrosoftAppId,
     appPassword: process.env.MicrosoftAppPassword
 });
+
+
+const bot = new Handler(memoryStorage, adapter);
 
 adapter.onTurnError = async (context, error) => {
     // This check writes out errors to console log .vs. app insights.

@@ -1,4 +1,4 @@
-import { TurnContext, TeamsActivityHandler, BotHandler, Storage, TaskModuleRequest } from 'botbuilder';
+import { TurnContext, TeamsActivityHandler, BotHandler, Storage, TaskModuleRequest, BotFrameworkAdapter } from 'botbuilder';
 import { Dialog, DialogSet } from 'botbuilder-dialogs';
 import { Datastore } from './model';
 export declare class Handler extends TeamsActivityHandler {
@@ -7,7 +7,8 @@ export declare class Handler extends TeamsActivityHandler {
     dialogSet: DialogSet;
     private storage;
     db: Datastore;
-    constructor(storage: Storage);
+    adapter: BotFrameworkAdapter;
+    constructor(storage: Storage, adapter: BotFrameworkAdapter);
     addDialog: (dialog: Dialog<{}>) => void;
     saveState: (context: TurnContext) => Promise<void>;
     handleEvent: (type: string, handler: BotHandler) => void;
