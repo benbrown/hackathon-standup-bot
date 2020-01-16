@@ -217,3 +217,173 @@
     "wrap": true
 }
 ```
+
+# ScheduleCard
+[Activity
+    Attachments = @{json(ScheduleCardJson())}
+]
+
+# ScheduleCardJson
+-```
+{
+    "type": "AdaptiveCard",
+    "body": [
+        {
+            "type": "Container",
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "text": "Schedule",
+                    "size": "Large",
+                    "weight": "Bolder"
+                }
+            ]
+        },
+        {
+            "type": "Container",
+            "items": [
+                {
+                    "type": "Container",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "Choose day(s)",
+                            "color": "Accent",
+                            "weight": "Bolder",
+                            "size": "Large"
+                        },
+                        {
+                            "type": "Input.Toggle",
+                            "title": "Monday",
+                            "value": "true",
+                            "wrap": false,
+                            "id": "Monday"
+                        },
+                        {
+                            "type": "Input.Toggle",
+                            "title": "Tuesday",
+                            "value": "true",
+                            "wrap": false,
+                            "id": "Tuesday"
+                        },
+                        {
+                            "type": "Input.Toggle",
+                            "title": "Wednesday",
+                            "value": "true",
+                            "wrap": false,
+                            "id": "Wednesday"
+                        },
+                        {
+                            "type": "Input.Toggle",
+                            "title": "Thursday",
+                            "value": "true",
+                            "wrap": false,
+                            "id": "Thursday"
+                        },
+                        {
+                            "type": "Input.Toggle",
+                            "title": "Friday",
+                            "value": "true",
+                            "wrap": false,
+                            "id": "Friday"
+                        }
+                    ]
+                },
+                {
+                    "type": "Input.Toggle",
+                    "title": "Saturday",
+                    "value": "false",
+                    "wrap": false,
+                    "id": "Saturday"
+                },
+                {
+                    "type": "Input.Toggle",
+                    "title": "Sunday",
+                    "value": "false",
+                    "wrap": false,
+                    "id": "Sunday"
+                },
+                {
+                    "type": "TextBlock",
+                    "text": "Set time",
+                    "size": "Large",
+                    "weight": "Bolder",
+                    "color": "Accent"
+                },
+                {
+                    "type": "ColumnSet",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "width": "stretch",
+                            "items": [
+                                {
+                                    "type": "Input.Time",
+                                    "id": "MeetingTime",
+                                    "value": "10:00"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "Column",
+                            "width": "stretch",
+                            "items": [
+                                {
+                                    "type": "Input.ChoiceSet",
+                                    "placeholder": "Pacific Standard Time",
+                                    "choices": [
+                                        {
+                                            "title": "Eastern Standard Time",
+                                            "value": "GMT-5"
+                                        },
+                                        {
+                                            "title": "Central Standard Time",
+                                            "value": "GMT-6"
+                                        },
+                                        {
+                                            "title": "Mountain Standard Time",
+                                            "value": "GMT-7"
+                                        },
+                                        {
+                                            "title": "Pacific Standard Time",
+                                            "value": "GMT-8"
+                                        },
+                                        {
+                                            "title": "Alaska Standard Time",
+                                            "value": "GMT-9"
+                                        },
+                                        {
+                                            "title": "Hawaii-Aleutian Standard Time",
+                                            "value": "GMT-10"
+                                        }
+                                    ],
+                                    "id": "Timezone"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "separator": true
+        },
+        {
+            "type": "ActionSet",
+            "actions": [
+                {
+                    "type": "Action.Submit",
+                    "title": "Save",
+                    "id": "Save"
+                },
+                {
+                    "type": "Action.Submit",
+                    "title": "Remove",
+                    "id": "Remove"
+                }
+            ]
+        }
+    ],
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.0",
+    "id": "ScheduleCard"
+}
+```
