@@ -217,3 +217,35 @@
     "wrap": true
 }
 ```
+
+# scheduleCard
+[Activity
+    Attachments = @{json(scheduleCardJson())}
+]
+
+# scheduleCardJson
+-```
+[{
+    "type": "AdaptiveCard",
+    "version": "1.0",
+    "body": [
+        {
+            "type": "TextBlock",
+            "text": "Current Schedule is ..."
+        },
+        {
+            "type": "ActionSet",
+            "actions": [
+                {
+                    "type": "Action.Submit",
+                    "title": "Change Schedule",
+                    "data": {
+                        "value": { "type": "task/fetch", "data": "adaptivecard" }
+                    }
+                }
+            ]
+        }
+    ],
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json"
+}]
+```

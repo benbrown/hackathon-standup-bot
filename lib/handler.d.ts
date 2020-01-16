@@ -1,4 +1,4 @@
-import { TurnContext, TeamsActivityHandler, BotHandler, Storage } from 'botbuilder';
+import { TurnContext, TeamsActivityHandler, BotHandler, Storage, TaskModuleRequest, TaskModuleResponse } from 'botbuilder';
 import { Dialog, DialogSet } from 'botbuilder-dialogs';
 import { Datastore } from './model';
 export declare class Handler extends TeamsActivityHandler {
@@ -14,4 +14,6 @@ export declare class Handler extends TeamsActivityHandler {
     triggerEvent: (context: TurnContext, type: string, onNext: () => Promise<void>) => Promise<void>;
     loadFeatures: (location: string) => void;
     private loadFeature;
+    protected handleTeamsTaskModuleFetch(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse>;
+    protected handleTeamsTaskModuleSubmit(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse>;
 }

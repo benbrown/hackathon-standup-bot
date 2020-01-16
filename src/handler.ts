@@ -7,7 +7,9 @@ import {
   BotHandler,
   ConversationState,
   StatePropertyAccessor,
-  Storage
+  Storage,
+  TaskModuleRequest,
+  TaskModuleResponse
 } from 'botbuilder';
 
 import {
@@ -21,6 +23,9 @@ import * as path from 'path';
 import * as fs from 'fs';
 
 import { Datastore } from './model';
+
+const { TemplateEngine } = require('botbuilder-lg');
+const lgEngine = new TemplateEngine().addFile(path.join(__dirname, '../../resources/standupPrompts.lg'));
 
 const debug = Debug('bot:handler');
 
@@ -106,4 +111,25 @@ export class Handler extends TeamsActivityHandler {
     const module: {default: (handler: TeamsActivityHandler) => void} = require(location);
     module.default(this);
   }
+
+  protected async handleTeamsTaskModuleFetch(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse> {
+    debug('handleTeamsTaskModuleFetch', context.activity, taskModuleRequest);
+    return {
+      task: {
+          type: 'continue',
+          value: {
+              card: this.getTaskModuleAdaptiveCard(),
+              height: 220,
+              width: 400,
+              title: 'Schedule'
+          }
+      }
+  };
+    // throw new Error('NotImplemented');
+  }
+
+  protected async handleTeamsTaskModuleSubmit(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse> {
+    debug('handleTeamsTaskModuleSubmit', context.activity);
+  }
+
 }
