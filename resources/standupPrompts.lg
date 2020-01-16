@@ -78,12 +78,71 @@
 }
 ```
 
-# SummaryCard
+# ActiveMeetingCard
 [Activity
-    Attachments = @{json(SummaryCardJson())}
+    Attachments = @{json(ActiveMeetingCardJson())}
 ]
 
-# SummaryCardJson
+
+# ActiveMeetingCardJson
+-```
+{
+    "type": "AdaptiveCard",
+    "version": "1.0",
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "id": "SummaryCard",
+    "body": [
+        {
+            "type": "TextBlock",
+            "text": "It's time for a stand-up! Click the button below to start yours.",
+            "wrap": true
+        },
+        {
+            "type": "ActionSet",
+            "actions": [
+                {
+                    "type": "Action.Submit",
+                    "title": "Begin My Stand-up",
+                    "id": "begin",
+                    "data": {
+                        "command": "begin"
+                    }
+                }
+            ],
+            "horizontalAlignment": "Center"
+        },
+        {
+            "id": "TitleContainer",
+            "type": "Container",
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "text": "Notes for channel @{channel}",
+                    "size": "Large",
+                    "wrap": true,
+                    "weight": "Bolder"
+                }
+            ]
+        },
+        {
+            "id": "QuestionsContainer",
+            "type": "Container",
+            "separator": true,
+            "items": [
+                @{QuestionContainerCard(questions)}
+            ]
+        }
+    ]
+}
+```
+
+# CompletedMeetingCard
+[Activity
+    Attachments = @{json(ActiveMeetingCardJson())}
+]
+
+
+# CompletedMeetingCardJson
 -```
 {
     "type": "AdaptiveCard",

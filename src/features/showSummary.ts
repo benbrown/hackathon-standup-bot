@@ -87,7 +87,7 @@ export default (handler: Handler) => {
         question_3
       ]
     };
-    await context.sendActivity(ActivityFactory.createActivity(lgEngine.evaluateTemplate("SummaryCard", summary)));
+    await context.sendActivity(ActivityFactory.createActivity(lgEngine.evaluateTemplate("ActiveMeetingCard", summary)));
     await next();
   });
 }

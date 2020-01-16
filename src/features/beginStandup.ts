@@ -68,7 +68,7 @@ export default (handler: Handler) => {
 
     currentStandup.original_card = results.id;
     currentStandup.channelId = channelId;
-    currentStandup.channel = thisChannel[0].name;
+    currentStandup.channel = thisChannel[0].name || 'General';
     currentStandup.team = teamDetails.name;
     currentStandup.respondees = [];
     currentStandup.questions = [{

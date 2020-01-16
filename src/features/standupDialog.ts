@@ -75,17 +75,18 @@ export default (handler: Handler) => {
       
       await handler.db.saveStandup(currentStandup);
 
-      await context.sendActivity(`${ results.user.name } finished a stand-up: \`\`\`${ JSON.stringify(results.answers, null, 2) }\`\`\``);
+      // await context.sendActivity(`${ results.user.name } finished a stand-up: \`\`\`${ JSON.stringify(results.answers, null, 2) }\`\`\``);
+      await context.sendActivity(`${ results.user.name } finished the stand-up.`);
 
       // update the original card with new stuff
-      let activity = ActivityFactory.createActivity(lgEngine.evaluateTemplate("SummaryCard", currentStandup))
-      // activity.id = currentStandup.original_card;
+      let activity = ActivityFactory.createActivity(lgEngine.evaluateTemplate("ActiveMeetingCard", currentStandup))
+      activity.id = currentStandup.original_card;
 
-      await context.sendActivity(activity);
+      // await context.sendActivity(activity);
 
       debug('CARD TO UPDATE', activity);
 
-      // await context.updateActivity(activity);
+      await context.updateActivity(activity);
     });
   }
 
