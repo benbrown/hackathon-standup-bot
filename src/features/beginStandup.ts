@@ -48,24 +48,26 @@ export default (handler: Handler) => {
     const channelId = thisChannel[0].id;
 
     let currentStandup = await handler.db.getStandupForChannel(channelId);
-    // debug('got current standup: ', currentStandup);
 
     if (currentStandup) {
+      debug('end current standup: ', currentStandup);
+
       // end this standup.
       // perhaps we want to do some final action here, like update the card to REMOVE THE BUTTON
-    } else {
-      // debug('creating new standup');
-      currentStandup = {};
+      let activity = ActivityFactory.createActivity(lgEngine.evaluateTemplate("CompletedMeetingCard", currentStandup))
+      activity.id = currentStandup.original_card;
+      await context.updateActivity(activity);
+
+      // delete the record
+      await handler.db.deleteStandupForChannel(channelId);
+
     }
 
-    // send initial message, and capture the id so we can update it later.    
-    // const results = await context.sendActivity(ActivityFactory.createActivity(lgEngine.evaluateTemplate("PrepareStandUpCard")));
-
-    let startStandUpCard = ActivityFactory.createActivity(lgEngine.evaluateTemplate("StartStandUpCard"));
-
-    // replace message with a card
+    const startStandUpCard = ActivityFactory.createActivity(lgEngine.evaluateTemplate("StartStandUpCard"));
     const results = await context.sendActivity(startStandUpCard);
 
+    currentStandup = {};
+    currentStandup.startTime = new Date();
     currentStandup.original_card = results.id;
     currentStandup.channelId = channelId;
     currentStandup.channel = thisChannel[0].name || 'General';
@@ -85,6 +87,7 @@ export default (handler: Handler) => {
     }];
 
     await handler.db.saveStandup(currentStandup);
+
 
     await next();
 

@@ -117,7 +117,7 @@
             "items": [
                 {
                     "type": "TextBlock",
-                    "text": "Notes for channel @{channel}",
+                    "text": "Stand-up for @{formatDateTime(startTime,'MMM d')}",
                     "size": "Large",
                     "wrap": true,
                     "weight": "Bolder"
@@ -138,7 +138,7 @@
 
 # CompletedMeetingCard
 [Activity
-    Attachments = @{json(ActiveMeetingCardJson())}
+    Attachments = @{json(CompletedMeetingCardJson())}
 ]
 
 
@@ -156,7 +156,7 @@
             "items": [
                 {
                     "type": "TextBlock",
-                    "text": "Notes for channel @{channel}",
+                    "text": "Stand-up for @{formatDateTime(startTime,'MMM d')}",
                     "size": "Large",
                     "wrap": true,
                     "weight": "Bolder"

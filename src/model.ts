@@ -29,7 +29,7 @@ export class Datastore {
   }
 
   public async deleteStandupForChannel(channelId: string) {
-
+    return await this.storage.delete([this.makeKey(channelId)]);
   }
 
   private makeKey(channelId: string) {
