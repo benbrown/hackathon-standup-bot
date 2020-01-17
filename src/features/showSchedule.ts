@@ -19,14 +19,14 @@ export default (handler: Handler) => {
   handler.onMessage(async(context, next) => {
     if (context.activity.text) {
       debug('evaluating text for a command', context.activity.text);
-      if (context.activity.text.match(/^(schedule)/i)) {
-        return await handler.triggerEvent(context, 'showSummaryCard', next);
+      if (context.activity.text.match(/^(test schedule)/i)) {
+        return await handler.triggerEvent(context, 'showScheduleCard', next);
       }
     }
     await next();
   });
 
-  handler.handleEvent('showSummaryCard', async(context, next) => {
+  handler.handleEvent('showScheduleCard', async(context, next) => {
     
     await context.sendActivity(ActivityFactory.createActivity(lgEngine.evaluateTemplate("ScheduleCard")));
     await next();
