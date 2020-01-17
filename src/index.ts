@@ -6,17 +6,24 @@
 // Import required pckages
 import * as path from 'path';
 import * as restify from 'restify';
-import { BotFrameworkAdapter, MemoryStorage, ConversationState } from 'botbuilder';
+import { BotFrameworkAdapter, MemoryStorage } from 'botbuilder';
+const { CosmosDbPartitionedStorage } = require('botbuilder-azure');
 
 import { Handler } from './handler';
-
-const memoryStorage = new MemoryStorage();
-
-// const { TeamsConversationBot } = require('./bots/teamsConversationBot');
 
 // Read botFilePath and botFileSecret from .env file.
 const ENV_FILE = path.join(__dirname, '..','.env');
 require('dotenv').config({ path: ENV_FILE });
+
+// Use CosmosDB in  Azure
+// const storage = new CosmosDbPartitionedStorage({
+//     cosmosDbEndpoint: process.env.DB_SERVICE_ENDPOINT, 
+//     authKey: process.env.AUTH_KEY, 
+//     databaseId: process.env.DATABASE_ID,
+//     containerId: process.env.CONTAINER
+// })
+
+const storage = new MemoryStorage();
 
 // Create adapter.
 // See https://aka.ms/about-bot-adapter to learn more about adapters.
@@ -26,7 +33,7 @@ const adapter = new BotFrameworkAdapter({
 });
 
 
-const bot = new Handler(memoryStorage, adapter);
+const bot = new Handler(storage, adapter);
 
 adapter.onTurnError = async (context, error) => {
     // This check writes out errors to console log .vs. app insights.

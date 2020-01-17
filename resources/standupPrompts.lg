@@ -373,11 +373,6 @@
                     "type": "Action.Submit",
                     "title": "Save",
                     "id": "Save"
-                },
-                {
-                    "type": "Action.Submit",
-                    "title": "Remove",
-                    "id": "Remove"
                 }
             ]
         }

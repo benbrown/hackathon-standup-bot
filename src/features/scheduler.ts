@@ -42,11 +42,12 @@ export default (handler: Handler) => {
     // first, we need to get the channel id.
     const reference = TurnContext.getConversationReference(context.activity);
 
-    const teamDetails = await TeamsInfo.getTeamDetails(context);
     const channelList = await TeamsInfo.getTeamChannels(context);
     const thisChannel = channelList.filter((channel) => { return reference.conversation.id.indexOf(channel.id) === 0 });
     const channelId = thisChannel[0].id;
     
+    const schedule = await handler.db.getScheduleForChannel(channelId);
+
     const card = CardFactory.heroCard('Stand-up Schedule',
     'Current schedule is...',
     null, // No images
@@ -62,9 +63,6 @@ export default (handler: Handler) => {
     const channelList = await TeamsInfo.getTeamChannels(context);
     const thisChannel = channelList.filter((channel) => { return context.activity.conversation.id.indexOf(channel.id) === 0 });
     const channelId = thisChannel[0].id;
-
-    debug('Update schedule for', channelId);
-    debug('UPDATE ACTIVITY', context.activity.value.data);
 
     let schedule = {
       ...context.activity.value.data,
@@ -152,5 +150,8 @@ export default (handler: Handler) => {
 
     }
   }
+
+  // load the cron and set it up at boot time
+  buildCron();
 
 }
