@@ -16,6 +16,7 @@ let lgEngine = new TemplateEngine().addFile(path.join(__dirname, '../../resource
 
 export default (handler: Handler) => {
 
+
   handler.onMessage(async(context, next) => {
     if (context.activity.text) {
       debug('evaluating text for start command:', context.activity.text);
@@ -52,14 +53,14 @@ export default (handler: Handler) => {
     if (currentStandup) {
       debug('end current standup: ', currentStandup);
 
+      // delete the record
+      await handler.db.deleteStandupForChannel(channelId);
+
       // end this standup.
       // perhaps we want to do some final action here, like update the card to REMOVE THE BUTTON
       let activity = ActivityFactory.createActivity(lgEngine.evaluateTemplate("CompletedMeetingCard", currentStandup))
       activity.id = currentStandup.original_card;
       await context.updateActivity(activity);
-
-      // delete the record
-      await handler.db.deleteStandupForChannel(channelId);
 
     }
 

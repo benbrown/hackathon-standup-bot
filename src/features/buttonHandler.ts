@@ -9,7 +9,7 @@ import {
 
 import * as Debug from 'debug'
 
-const debug = Debug('bot:features:beginStandup');
+const debug = Debug('bot:features:buttonHandler');
 
 export default (handler: Handler) => {
 

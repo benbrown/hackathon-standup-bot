@@ -7,7 +7,7 @@ import { Handler } from '../handler';
 
 import * as Debug from 'debug'
 
-const debug = Debug('bot:features:beginStandup');
+const debug = Debug('bot:features:showSummary');
 
 const { ActivityFactory, TemplateEngine } = require('botbuilder-lg');
 const path = require('path');

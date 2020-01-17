@@ -16,14 +16,14 @@ const ENV_FILE = path.join(__dirname, '..','.env');
 require('dotenv').config({ path: ENV_FILE });
 
 // Use CosmosDB in  Azure
-// const storage = new CosmosDbPartitionedStorage({
-//     cosmosDbEndpoint: process.env.DB_SERVICE_ENDPOINT, 
-//     authKey: process.env.AUTH_KEY, 
-//     databaseId: process.env.DATABASE_ID,
-//     containerId: process.env.CONTAINER
-// })
+const storage = new CosmosDbPartitionedStorage({
+    cosmosDbEndpoint: process.env.DB_SERVICE_ENDPOINT, 
+    authKey: process.env.AUTH_KEY, 
+    databaseId: process.env.DATABASE_ID,
+    containerId: process.env.CONTAINER
+});
 
-const storage = new MemoryStorage();
+// const storage = new MemoryStorage();
 
 // Create adapter.
 // See https://aka.ms/about-bot-adapter to learn more about adapters.

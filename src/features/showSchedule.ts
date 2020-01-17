@@ -7,7 +7,7 @@ import { Handler } from '../handler';
 
 import * as Debug from 'debug'
 
-const debug = Debug('bot:features:beginStandup');
+const debug = Debug('bot:features:showSchedule');
 
 const { ActivityFactory, TemplateEngine } = require('botbuilder-lg');
 const path = require('path');
@@ -27,7 +27,6 @@ export default (handler: Handler) => {
   });
 
   handler.handleEvent('showScheduleCard', async(context, next) => {
-    
     await context.sendActivity(ActivityFactory.createActivity(lgEngine.evaluateTemplate("ScheduleCard")));
     await next();
   });

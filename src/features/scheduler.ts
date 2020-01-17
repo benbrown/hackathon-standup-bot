@@ -1,7 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-import {  MessageFactory, CardFactory, TurnContext, TeamsInfo } from 'botbuilder';
+import { MessageFactory, CardFactory, TurnContext, TeamsInfo } from 'botbuilder';
+import { AppCredentials } from 'botframework-connector';
 
 import { Handler } from '../handler';
 
@@ -48,8 +49,45 @@ export default (handler: Handler) => {
     
     const schedule = await handler.db.getScheduleForChannel(channelId);
 
+    let description = '';
+
+    if (schedule) {
+      let daysofweek = []
+      if (schedule.Monday == 'true' && schedule.Tuesday == 'true' && schedule.Wednesday == 'true' && schedule.Thursday == 'true' && schedule.Friday == 'true') {
+        daysofweek.push('every weekday');
+      } else if (schedule.Monday == 'true' && schedule.Tuesday == 'true' && schedule.Wednesday == 'true' && schedule.Thursday == 'true' && schedule.Friday == 'true' && schedule.Saturday == 'true' && schedule.Sunday == 'true') {
+        daysofweek.push('every day');
+      } else {
+        if (schedule.Monday == 'true') {
+          daysofweek.push('Monday');
+        }
+        if (schedule.Tuesday == 'true') {
+          daysofweek.push('Tuesday');
+        }
+        if (schedule.Wednesday == 'true') {
+          daysofweek.push('Wednesday');
+        }
+        if (schedule.Thursday == 'true') {
+          daysofweek.push('Thursday');
+        }
+        if (schedule.Friday == 'true') {
+          daysofweek.push('Friday');
+        }
+        if (schedule.Saturday == 'true') {
+          daysofweek.push('Saturday');
+        }
+        if (schedule.Sunday == 'true') {
+          daysofweek.push('Sunday');
+        }
+      }
+
+      description = `Stand-up is currently scheduled for ${ schedule.MeetingTime } on ${ daysofweek.join(' and ') }.`;
+    } else {
+      description = 'No stand-up is currently scheduled for this channel.';
+    }
+
     const card = CardFactory.heroCard('Stand-up Schedule',
-    'Current schedule is...',
+    description,
     null, // No images
     [{ type: 'invoke', title: 'Set Schedule', value: { type: 'task/fetch', data: 'showSchedule' } }]);
     const message = MessageFactory.attachment(card);
@@ -136,6 +174,8 @@ export default (handler: Handler) => {
 
       await handler.adapter.continueConversation(schedule.reference,
             async (context) => {
+
+              AppCredentials.trustServiceUrl(schedule.reference.serviceUrl);
 
               // make sure the activity has the necessary teams-specific fields 
               if (!context.activity.channelData) {
