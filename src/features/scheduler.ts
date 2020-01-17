@@ -68,6 +68,7 @@ export default (handler: Handler) => {
 
     let schedule = {
       ...context.activity.value.data,
+      teamId: context.activity.channelData.team.id,
       reference: TurnContext.getConversationReference(context.activity)
     }
     await handler.db.setScheduleForChannel(channelId, schedule);
@@ -137,6 +138,14 @@ export default (handler: Handler) => {
 
       await handler.adapter.continueConversation(schedule.reference,
             async (context) => {
+
+              // make sure the activity has the necessary teams-specific fields 
+              if (!context.activity.channelData) {
+                context.activity.channelData = {};
+              }
+              context.activity.channelData.team = { 
+                id: schedule.teamId,
+              }
               return await handler.triggerEvent(context, 'beginStandup', async() => {});
             }
       );
