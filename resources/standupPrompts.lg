@@ -1,3 +1,90 @@
+# HelpCard
+[Activity
+    Attachments = @{json(HelpCardJson())}
+]
+
+# HelpCardJson
+-```
+{
+    "type": "AdaptiveCard",
+    "version": "1.0",
+    "body": [
+        {
+            "type": "Container",
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "text": "Help",
+                    "size": "Large",
+                    "weight": "Bolder"
+                }
+            ],
+            "id": "TitleContainer"
+        },
+        {
+            "type": "Container",
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "text": "Start",
+                    "color": "Accent",
+                    "size": "Medium",
+                    "weight": "Bolder"
+                },
+                {
+                    "type": "TextBlock",
+                    "text": "Say **start** to trigger an ad-hoc stand-up in a channel. Each member can begin a 1:1 conversation with the bot to report:\\n* What you worked on yesterday\\n* What you are working on today\\n* Any blockers",
+                    "wrap": true
+                }
+            ]
+        },
+        {
+            "type": "Container",
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "text": "Schedule",
+                    "color": "Accent",
+                    "weight": "Bolder",
+                    "size": "Medium"
+                },
+                {
+                    "type": "TextBlock",
+                    "text": "Say **schedule** to set up a recurring daily stand-up in a channel.",
+                    "wrap": true
+                }
+            ]
+        },
+        {
+            "type": "Container",
+            "items": [
+                {
+                    "type": "ActionSet",
+                    "actions": [
+                        {
+                            "type": "Action.OpenUrl",
+                            "title": "View known issues",
+                            "url": "https://github.com/benbrown/hackathon-standup-bot/issues"
+                        },
+                        {
+                            "type": "Action.OpenUrl",
+                            "title": "File a new issue",
+                            "url": "https://github.com/benbrown/hackathon-standup-bot/issues/new"
+                        }
+                    ],
+                    "horizontalAlignment": "Center",
+                    "separator": true
+                }
+            ]
+        }
+    ],
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json"
+}
+```
+
+# Error
+- The bot encountered an error or bug. To continue to run this bot, please fix the bot source code.
+
 # BeginStandupUsage
 - To begin a stand-up, say @standup begin inside a Team chat. I cannot start a new stand-up from inside a 1:1 chat.
 - To begin a stand-up, say @standup start inside a Team chat. I'm unable to start a new stand-up via a 1:1 chat.
