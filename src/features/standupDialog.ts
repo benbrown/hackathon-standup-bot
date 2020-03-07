@@ -29,15 +29,15 @@ export default (handler: Handler) => {
       return await step.prompt('TEXTPROMPT', lgEngine.evaluateTemplate("WorkingOnPastPrompt"));
     }, 
     async(step) => {
-      step.values['answers'].push(step.result);
+      step.values['answers'].push(sanitizeResponse(step.result));
       return await step.prompt('TEXTPROMPT', lgEngine.evaluateTemplate("WorkingOnNextPrompt"));
     }, 
     async(step) => {
-      step.values['answers'].push(step.result);
+      step.values['answers'].push(sanitizeResponse(step.result));
       return await step.prompt('TEXTPROMPT', lgEngine.evaluateTemplate("BlockerPrompt"));
     },  
     async(step) => {
-      step.values['answers'].push(step.result);
+      step.values['answers'].push(sanitizeResponse(step.result));
 
       const results = {
         answers: step.values['answers'],
@@ -55,6 +55,11 @@ export default (handler: Handler) => {
       return await step.endDialog(results);
     }
   ]);
+
+  function sanitizeResponse(result: string): any {
+      console.debug(result);
+      return result.replace(/(\n)/gm,"\\n");
+  }
 
   const deliverReportToChannel = async(adapter: BotFrameworkAdapter, results: any): Promise<void> => {
     await adapter.continueConversation(results.originalContext, async(context) => {
