@@ -33,7 +33,7 @@
                 },
                 {
                     "type": "TextBlock",
-                    "text": "Say **start** to trigger an ad-hoc stand-up in a channel. Each member can begin a 1:1 conversation with the bot to report:\\n* What you worked on yesterday\\n* What you are working on today\\n* Any blockers",
+                    "text": "Say **start** to trigger an ad-hoc stand-up in a channel. When a member selects **Begin My Stand-up** I'll initiate a 1:1 asking the following questions:\\n\\n\\n\\n* What you worked on yesterday?\\n* What you are working on today?\\n* Any blockers?\\n\\nThen I'll report back in the thread the message thread the stand-up started in.",
                     "wrap": true
                 }
             ]
@@ -52,6 +52,171 @@
                     "type": "TextBlock",
                     "text": "Say **schedule** to set up a recurring daily stand-up in a channel.",
                     "wrap": true
+                }
+            ]
+        },
+        {
+            "type": "Container",
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "text": "Formatting your responses",
+                    "size": "Large",
+                    "weight": "Bolder"
+                },
+                {
+                    "type": "TextBlock",
+                    "text": "Due to constraints, use the following when we have a 1:1."
+                },
+                {
+                    "type": "ColumnSet",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "width": "stretch",
+                            "items":[]
+                        },
+                        {
+                            "type": "Column",
+                            "width": "stretch",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "✅Do",
+                                    "size": "Medium",
+                                    "weight": "Bolder"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "Column",
+                            "width": "stretch",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "⛔Don't",
+                                    "size": "Medium",
+                                    "weight": "Bolder"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "ColumnSet",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "width": "stretch",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "Lists",
+                                    "size": "Medium",
+                                    "weight": "Bolder"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "Column",
+                            "width": "stretch",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "Separate lists with new lines without special formatting, like:\\n\\n\\n\\n\\nItem1\\n\\nItem2\\n\\nItem3",
+                                    "wrap": true
+                                }
+                            ]
+                        },
+                        {
+                            "type": "Column",
+                            "width": "stretch",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "Avoid bulleted or numbered lists. They are processed on a single line and difficult to read.",
+                                    "wrap": true
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "ColumnSet",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "width": "stretch",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "Attach URLs",
+                                    "weight": "Bolder",
+                                    "size": "Medium"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "Column",
+                            "width": "stretch",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "Paste it as a normal link, like:\\n\\n\\n\\nhttps://contoso.com/",
+                                    "wrap": true
+                                }
+                            ]
+                        },
+                        {
+                            "type": "Column",
+                            "width": "stretch",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "Don't format a link through the composer. I can only read the display text.",
+                                    "wrap": true
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "ColumnSet",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "width": "stretch",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "Express yourself",
+                                    "size": "Medium",
+                                    "weight": "Bolder"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "Column",
+                            "width": "stretch",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "Use emojis! 🌟"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "Column",
+                            "width": "stretch",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "Don't send reactions like emoticons or GIFs from the composer. They won't show up.",
+                                    "wrap": true
+                                }
+                            ]
+                        }
+                    ]
                 }
             ]
         },
