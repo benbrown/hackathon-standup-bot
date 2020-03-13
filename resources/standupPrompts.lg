@@ -134,7 +134,7 @@
                             "items": [
                                 {
                                     "type": "TextBlock",
-                                    "text": "Avoid bulleted or numbered lists. They are processed on a single line and difficult to read.",
+                                    "text": "Don't use bulleted or numbered lists. They are processed on a single line and difficult to read.",
                                     "wrap": true
                                 }
                             ]
