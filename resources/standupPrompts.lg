@@ -14,7 +14,7 @@
             "items": [
                 {
                     "type": "TextBlock",
-                    "text": "Help",
+                    "text": "Commands",
                     "size": "Large",
                     "weight": "Bolder"
                 }
